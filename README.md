@@ -40,6 +40,8 @@ opening a pull request.
 - **`pools.txt`** - one line per pool, both PPLNS (`elektron-net-ppool`) and
   solo (`elektron-net-pool`) entries together, tagged by type.
 - **`mempools.txt`** - one line per known block explorer / mempool instance.
+- **`rate.json`** - the project's reference conversion rate; see
+  [Reference rate](#reference-rate-ratejson) below.
 
 `mempools.txt` uses a deliberately simple format, one entry per line, fields
 comma-separated, each line ending in `;`:
@@ -85,6 +87,33 @@ pool and mempool-explorer software can implement to participate.
 Fork this repository, add your line to the appropriate file, and open a pull
 request. Both files simply grow over time; entries are not automatically
 removed.
+
+## Reference rate (`rate.json`)
+
+There is no market for ELEK anywhere, so conversion rates are *defined by the
+project* rather than discovered from order books. `rate.json` is the single
+published reference for software that wants to display fiat values - the
+[`elektron-net-electrs`](https://github.com/kutlusoy/elektron-net-electrs)
+FX module (banner, `blockchain.fx.rates`, mempool-shaped prices snapshot) and
+the [`elektron-net-electrum`](https://github.com/kutlusoy/elektron-net-electrum)
+wallet provider both read it, no exchange integration involved.
+
+Accepted shapes (consumers are intentionally lenient):
+
+```
+{"USD": 0.25, "EUR": 0.21}
+{"ticker": "ELEK", "updated_unix": 1790788077, "rates": {"USD": 0.25, "EUR": 0.21}}
+```
+
+- `updated_unix` (optional) is the publish timestamp; consumers surface it as
+  the rate's age instead of assuming the fetch was fresh.
+- Values may be JSON numbers or numeric strings; non-positive/non-finite
+  values are rejected.
+- Missing EUR is derived from USD by a fixed internal factor (0.92) — better
+  to publish both explicitly.
+
+Software displaying a rate from this file should label its source (e.g.
+"project registry reference rate") so it is never mistaken for a market price.
 
 ## Official Elektron Net links
 

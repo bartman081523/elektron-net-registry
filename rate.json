@@ -1,0 +1,8 @@
+{
+  "ticker": "ELEK",
+  "updated_unix": 1790788077,
+  "rates": {
+    "USD": 0.25,
+    "EUR": 0.21
+  }
+}
